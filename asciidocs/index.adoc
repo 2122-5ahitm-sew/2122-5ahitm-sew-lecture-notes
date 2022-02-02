@@ -193,6 +193,60 @@ endif::backend-html5[]
 
 == 2021-11-08
 
+== 2022-01-31
+=== Was ist Keycloak?
+- Authentifizierungsservice
+
+=== Propertiesfile Beispiel
+- application.properties
+
+=== Was ist eine Rolle?
+- Abstraktionsschicht, wo verschiedene Rechte gesammelt sind, die man den einzelnen Benutzern zuweisen kann
+
+- klar definiert, wer worauf zugreifen darf (User, Admin)
+
+=== Chrome Job
+- periodisch, macht etwas zu einer bestimmten Zeit
+
+=== Wie kann man testen?
+- Karate
+- Rest-Assured
+
+=== Was ist REST?
+- Internet für Maschinen/Dienste/Programme
+
+=== Wie kann man auf REST-Service zugreifen?
+- Browser (GET)
+- grafische Clients (zB. Postman, Insomnia)
+- IDE-CLient (requests.http)
+- Shell-Clients (curl, httpie)
+- Test-Frameworks (Intnit ..., REST Assured)
+
+=== Was ist qute?
+- Quarkus testable engine
+- direkt auf Javacode zugreifen
+- serverseitig
+
+=== Extension hinzufügen (Terminal):
+- quarkus ext add resteasy-qute
+
+=== Was ist eine Deklaration?
+- etwas im System bekannt machen
+- Allokierung vom Speicherplatz den man brauchen wird
+
+=== Was ist eine Initialisierung?
+- erstmalige Zuweisung von einem Wert / Wert das 1.mal zuweisen
+
+=== Octet
+- Bytestream
+
+
+=== HÜ:
+Using security with .properties File in Microprojekt einbauen (quarkus.io)
+
+Kapitelweise Zusammenfassung ins README von Microprojekt
+
+
 
 
 
