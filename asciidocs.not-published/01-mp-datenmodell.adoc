@@ -1,0 +1,1295 @@
+= Microproject 01 - Datenmodelle
+Thomas W. Stütz
+1.0.0, {docdate}: Grading
+ifndef::imagesdir[:imagesdir: images]
+:icons: font
+:sectnums:
+:toc: left
+
+== Allgemeine Bemerkungen
+
+* Tags sollen in den Commits sein (nicht die Revisions-Tags)
+
+== Besic Meris
+
+* kein Backend
+
+.CLD
+[%collapsible]
+====
+[plantuml,besic-cld,png]
+----
+@startuml
+class Grave {
+- id: Long
+- section: String
+- price: double
+- rent: Rent
+}
+
+class Employee {
+- id: Long
+- firstName: String
+- lastName: String
+- salary: int
+- rents: List<Rent>
+}
+
+class Customer {
+- id: Long
+- firstName: String
+- lastName: String
+- telNr: String
+- email: String
+- rents: List<Rent>
+}
+
+class Rent {
+- id: Long
+- startDate: LocalDate
+- endDate: LocalDate
+- engraving: String
+- customer: Customer
+- employee: Employee
+- grave: Grave
+}
+
+Grave "1" -- "1" Rent
+Rent "*" -- "1" Employee
+Rent "*" -- "1" Customer
+
+@enduml
+----
+====
+
+* Multiplizitäten (Kardinalitäten) kontrollieren
+
+
+
+
+== Dorfinger Jonas
+
+.CLD
+[%collapsible]
+====
+[plantuml,dorfinger-cld,png]
+----
+@startuml
+class Employee
+class Machine
+class MachineType
+class Material
+class Product
+class Production
+
+Product "1" --- "*" Production
+Material "1" --- "*" Production
+Employee "1" --- "*" Production
+Machine "1" --- "*" Production
+Machine "*" --- "1" MachineType
+Employee "*" --- "1" MachineType
+Product "*" --- "1" Material
+
+class Employee {
+    + name
+    + age
+    + salary
+    + hireDate
+    + handleAbleMachineType
+}
+
+class Machine {
+    + machineType
+    + requiredMachineType
+}
+
+enum MachineType {
+    HEAVY,
+    MEDIUM,
+    LIGHT
+}
+
+class Material {
+    + name
+    + code
+    + inStock
+}
+
+class Product {
+    + name
+    + material
+}
+
+class Production {
+    + employee
+    + machine
+    + product
+}
+
+@enduml
+----
+====
+
+* Machine requiredMachineType -> kann ich mir nichts vorstellen
+* Was ist das für ein Wort? -> handleAbleMachineType
+* Was soll die Klasse Production?
+** Ist das ein Produktionsschritt?
+** Dann sollte der nachfolgende Schritt einzutragen sein!
+** Ausserdem fehlt sowas wie Dauer usw.
+* Hier wären ein paar Beispielsdaten hilfreich
+
+IMPORTANT: Du Minimalist
+
+
+
+
+
+== Dumfarth Felix
+
+.CLD
+[%collapsible]
+====
+[plantuml,dumfarth-cld,png]
+----
+@startuml
+
+class Person {
+-String firstName
+-String lastName
++String getFirstName()
++void setFirstName()
+}
+Person "1"<-->"*" Store :owns
+Store "*"<-->"0..*" Event :is involved
+class Store{
+-int storeId
++int getStoreId()
++void setStoreId()
+-String storeName
++String getStoreName()
++void setStoreName()
+-int rent
++int getRent()
++void setRent()
+-Person shopkeeper
++Person getShopKeeper()
++void setShopKeeper()
+-Category category
++Category getCategory()
++void setCategory()
++ String toString()
+}
+
+class Event{
+-Date date
++Date getDate()
++void setDate()
+-String name
++String getName()
++void setName()
+-List<Store> involvedStores
++Store getInvolvedStore()
++void setInvolveldStore()
++ String toString()
+
+}
+
+enum Category {
+    CLOTHING
+    BOOKS
+    ELECTRONICS
+    GASTRONOMY
+    ENTERTAINMENT
+}
+
+@enduml
+----
+====
+
+* Deine Doppelpfeile sind sinnlos, sogar verwirrend!
+* Welche Geschäftslogik hast Du Dir überlegt?
+* Du hast das CLD ja schön ausgearbeitet (Methoden), aber tue mir schwer zu erraten, was Du später programmieren möchtest.
+
+
+
+
+
+
+== Ecker Quirin
+
+* Bravo!!! - deine gh-action
+* DB ist schon vorbereitet
+
+.CLD
+[%collapsible]
+====
+[plantuml,ecker-cld,png]
+----
+@startuml
+'https://plantuml.com/class-diagram
+
+interface Resource {
+    id: Long,
+    costPerHour: double
+    type: "Employee" | "Vehicle"
+}
+
+class Vehicle implements Resource {
+    id: Long
+    model: Model
+    age: int
+    notice: String
+}
+
+class Employee implements Resource{
+    id: Long
+    firstname: String
+    lastname: String
+    svn: int
+    address: Address
+}
+
+
+class Model {
+    brand: String
+    name: String
+    year: int
+}
+
+class Address {
+    street: string
+    place: string
+    zip: int
+}
+
+class ResourceAssignment {
+    id: Long
+    resource: Resource
+    constructionSite: ConstructionSite,
+    timeCostInHours: int
+}
+
+class ConstructionSite {
+    id: Long
+    resources: List<ResourceAssignment>
+    address: Address
+}
+
+ResourceAssignment "*" -- "1" Resource
+ResourceAssignment "*" -- "1" ConstructionSite
+ConstructionSite "1" -- "*" Address
+Employee "1" -- "*" Address
+Model "*" -- "1" Vehicle
+
+
+@enduml
+----
+====
+
+
+
+
+
+
+== Edlinger Philipp
+
+.CLD
+[%collapsible]
+====
+[plantuml,edlinger-cld,png]
+----
+@startuml
+class Customer{
+    - Long customerId
+    - String firstName
+    - String lastName
+    - List<Transaction> orderedPlants
+}
+
+class Transaction{
+    - Long transactionId
+    - Plant plant
+    - Customer customer
+    - LocalDate dateOfTransaction
+}
+
+class Plant{
+    - Long plantId
+    - String plantName
+    - PlantType plantType
+}
+
+class CropArea{
+    - Long cropAreaId
+    - List<Plant> plantList
+}
+Customer "1" -- "*" Transaction : buys
+Plant "1" -right- "*" Transaction : is ordered
+CropArea "1" -- "*" Plant : planted
+@enduml
+----
+====
+
+* Sollte die CropArea nicht mit Transaction verbunden sein
+* ... oder eine zusätzliche Tabelle (für Anbau)
+** Eine Pflanze wird auf einem Feld angebaut; es gibt mehrere Arbeiten (Transaktionen)
+
+
+
+
+
+== Feichtinger Sarah
+
+* Backend
+** Vergiss nicht die dependencies upzudaten: Quarkus 1.8.2 ist relativ alt
+** Recyceln ist ok, aber bitte überarbeiten.
+
+.CLD
+[%collapsible]
+====
+[plantuml,feichtinger-cld,png]
+----
+@startuml
+
+class Dish
+{
+    -name: String
+    -description: String
+    -minTime: int
+    -procedure: String
+    -tag: Tag
+    -difficulty: Difficulty
+}
+
+class Ingredient
+{
+    -amount: int
+    -unit: String
+    -dish: Dish
+    -resource: Resource
+}
+
+class Resource
+{
+    -name: String
+    -comment: String
+}
+
+Dish "1" *--> "1" Tag
+Dish "1" *--> "1" Difficulty
+
+Ingredient "*" *--> "1" Dish
+Ingredient "*" *--> "1" Resource
+
+
+enum Tag {
+  SUPPE
+  SALAT
+  HAUPTSPEISE
+  NACHTISCH
+  ANDERS
+}
+
+enum Difficulty {
+  EASY
+  NORMAL
+  CHALLENGING
+}
+
+@enduml
+----
+====
+
+* Die Notation Deines CLDs ist nicht korrekt.
+** Warum verwendest Du überall die Komposition
+** BTW: das von IntelliJ generiert CLD entspricht ebenfalls nicht UML
+* Wie hast Du die gh-pages deployed?
+** manuell? (hoffentlich nicht)
+** Du hast weder scripts noch gh-actions
+
+
+
+
+== Höfler Tobias
+
+* über Dein CLD muss man reden
+
+.CLD
+[%collapsible]
+====
+[plantuml,hoefler-cld,png]
+----
+@startuml
+
+class Artist {
+ - artistName: String
+ - firstName: String
+ - lastName: String
+ - albums: List<Album>
+ - singles: List<Track>
+ - monthlyListeners: int
+}
+
+class Album {
+ - name: String
+ - artist: Artist
+ - genre: String
+ - tracklist: List<Track>
+}
+
+class Track {
+ - title: String
+ - trackLength: LocalDate
+ - artist: Artist
+}
+
+class Tour {
+    - title: String
+    - mainArtist: Artist
+    - preAct: Artist
+    - tourStops: List<Concert>
+}
+
+class Concert {
+    - locationName: String
+    - performingArtists: List<Artist>
+    - date: LocalDate
+    - adress: String
+    - capacity: int
+}
+
+
+Artist "1*" <--- "1*" Album: has >
+Artist "1" <--- "1*" Track: has (single release) >
+Artist "1" <--- "1*" Tour: performs >
+Artist "1*" <--- "1*" Concert: performs >
+Album "*" <--- "1" Track: is made of >
+Tour "1" <--- "*" Concert: has >
+
+@enduml
+----
+====
+
+
+
+
+
+
+
+
+== Kalinke Silvio
+
+* Du solltest den gh-pages-Link ins *About* Deines gh-Repos posten
+
+* Sehr witzig - Dein Backend hat nur den src-Ordner icon:frown-o[]
+
+* Dein git-repo ist Kraut und Rüben!!!
+
+* Was soll das sein?
+
+.Was soll das sein (jekyll - echt jetzt?)
+image::kalinke-gh-page.png[]
+
+
+.CLD
+[%collapsible]
+====
+[plantuml,kalinke-cld,png]
+----
+@startuml
+
+class FacilityManager {
+    + Long: id
+    * String: firstName
+    * String: lastName
+    * double: salary
+}
+
+class Building {
+    + Long: id
+    * String: typeOfBuilding
+    * int: surface
+}
+
+class Room {
+    + Long: id
+    * String: usage;
+    * boolean: used
+    * int: surface
+}
+
+class Repair {
+    + Long: id
+    * String: typeOfDamage
+    * String: description
+    * double: fixingTime
+}
+
+FacilityManager "1" -- "*" Building : work at >
+Building "1" -- "*" Room : has >
+Room "1" -- "0..*" Repair : may need >
+FacilityManager "1" -- "0..*" Repair : has to >
+
+@enduml
+----
+====
+
+* CLD ist ganz ok
+** Anstelle Repair solltest Du was Allgemeines wählen zB issue
+** Eine Tabelle fehlt noch, wo drin steht wann der Hausmeister den Issue erledigt (Task, Order, ...)
+
+== Klausner Florian
+
+* Du solltest den gh-pages-Link ins *About* Deines gh-Repos posten
+
+* Es ist toll, dass Du ein Backend hast. Die Klassen sollten jedoch nicht leer sein.
+
+* Wie hast Du die gh-pages deployed?
+** manuell? (hoffentlich nicht)
+** Du hast weder scripts noch gh-actions
+
+.CLD
+[%collapsible]
+====
+[plantuml,klausner-cld,png]
+----
+@startuml
+
+class Animal {
+    - String name;
+    - String species;
+    - int age;
+    - long animalId;
+    - Enclosure enclosure;
+}
+
+class Enclosure {
+    - long enclosureId;
+    - List<Animal> animals;
+}
+
+class Staff {
+    - String name;
+    - long staffId;
+    - List<Enclosure> enclosure;
+}
+
+
+Animal "1" -- "*" Enclosure
+Enclosure "*" -- "1" Staff
+
+@enduml
+----
+====
+
+* Dein CLD ist
+. falsch (In einem Käfig können sicher auch mehrere Tiere leben; einen Käfig können sicher mehrere Tierpfleger betreuen)
+. und hat *sehr* wenige Klassen (zumindest noch 1-2 Klassen dazu, zB Diensteinteilung für Tierpfleger)
+
+* Statt Enclosure -> Location verwenden
+* Es ist vorteilhaft Klassenattribute zu verwenden
+
+
+
+== Knogler Simon
+
+* Es fehlt der Link zu den gh-pages
+* Habe überhaupt keine Idee, was Du für eine Geschäftsidee für Dein Projekt hast
+* Dein Backend ist schon fortgeschritten
+
+
+
+
+
+
+
+== Mandel Rosalie
+
+* Ein sehr übersichtliches CLD.
+** Wäre zB interessant, ob der Kunde auch bezahlt hat
+
+* Du solltest den gh-pages-Link ins *About* Deines gh-Repos posten
+
+
+* backend soweit ok
+
+.fristName?
+image::mandel-cld-reverse.png[]
+
+.CLD
+[%collapsible]
+====
+[plantuml,mandel-cld,png]
+----
+@startuml
+
+
+class Customer {
+  id : int
+  firstName : String
+  lastName : String
+  eMail : String
+}
+
+class Booking {
+    id : int
+    trip : Trip;
+    customer : Customer;
+    tripStart : LocalDate;
+    tripEnd : LocalDate;
+}
+
+class Trip {
+  id : int
+  price : double
+  destination : String
+}
+
+Booking "*" --> "1" Trip: ist gebucht
+Booking "*" --> "1" Customer: bucht
+
+
+@enduml
+----
+====
+
+
+
+
+
+== Primetzhofer Vanessa
+
+* Wo ist der Link zu deinen gh-pages? Sollte im *About* des Repos sein
+
+* Verwendest Du die gh-actions?
+
+.CLD
+[%collapsible]
+====
+[plantuml,primetzhofer-cld,png]
+----
+@startuml
+
+abstract class Person {
+- id : long
+- firstname : String
+- lastname : String
+- age : int
+}
+
+class Skiteacher {
+- salary : int
+}
+
+class Skistudent{
+}
+
+class Course{
+- id : long
+- name : String
+- member : int
+- aGroup : Group
+- teacher : Skiteacher
+}
+
+class Booking{
+- id : long
+- student : Skistudent
+- course : Course
+}
+
+enum Group {
+ANFAENGER
+KOENNER
+PROFIS
+UNBEKANNT
+}
+
+Course "1" *--> "*" Skiteacher
+Booking "1" *--> "*" Skistudent
+Booking "*" *--> "1" Course
+Skiteacher --|> Person
+Skistudent --|> Person
+Course "1" *--> "1" Group
+@enduml
+----
+====
+
+.Würde hier eher EnumType.STRING verwenden, da sprechender
+[source,java]
+----
+@Entity
+public class Course extends PanacheEntity {
+
+    private String name;
+    private int member;
+    @Enumerated(EnumType.ORDINAL)
+    private Group aGroup;
+----
+
+
+
+
+
+
+== Raffeiner Christine
+
+* Wie hast Du die gh-pages deployed?
+** manuell? (hoffentlich nicht)
+** Du hast weder scripts noch gh-actions
+
+* Backend fehlt (ist kein Problem)
+
+.CLD
+[%collapsible]
+====
+[plantuml,raffeiner-cld,png]
+----
+@startuml
+'https://plantuml.com/class-diagram
+
+abstract class Person{
+    +id : Long
+    +firstname : String
+    +lastname : String
+    +email : String
+    +age : int
+}
+
+class Student{
+}
+
+class Teacher{
+    +salary : double
+}
+
+class Lesson{
+    +id : Long
+    +date : LocalDate
+    +durration : double
+    +starttime : String
+    +costs : double
+    +type : Lessontype
+    +teacher : Teacher
+}
+
+class Booking{
+    +id : Long
+    +lessonpayed  Boolean
+    +student : Student
+    +lesson : Lesson
+}
+
+enum Lessontype{
+    BALLET
+    HIPHOP
+    GRUNDKURS_EINSTEIGER
+    GRUNDKURS_FORTGESCHRITTENE
+    GRUNDKURS_PROFIS
+}
+
+Lesson -down-> Lessontype
+Booking -down-> Lesson
+Lesson -up-> Teacher
+Booking -up-> Student
+Person <|-- Teacher
+Person <|-- Student
+
+@enduml
+----
+====
+
+* durration --> duration
+* Lesson wäre nur 1 Tanzabend, Course wäre Kurs; falls so gewollt, dann ok
+* Kann mir nicht vorstellen, welchen Wert duration hat (Einheiten, Minuten, ... ) ev. durationMinutes oder durationUnits
+* Anstelle GRUNDKURS ev. STANDARDTANZ; zB STANDARDTANZ_FORTGESCHRITTENE
+
+
+
+
+
+== Ratzenböck Jakob n/a
+
+
+
+
+
+
+
+== Scholl Sebastian
+
+* Ganz wichtig, dass Du die Konstruktoren angibst -> macht das CLD übersichtlicher
+
+* backend vorhanden
+
+.CLD
+[%collapsible]
+====
+[plantuml,scholl-cld,png]
+----
+@startuml
+
+class Customer {
+  + firstName: String
+  + lastName: String
+  + street: String
+  + houseNumber: int
+  + zip: int
+  + city: String
+
+  + Customer()
+  + Customer(String firstName, String lastName, String street, int houseNumber, int zip, String city)
+
+  + toString(): String
+}
+
+class Invoice {
+  + customer: Customer
+
+  + Invoice()
+  + Invoice(Customer customer)
+
+  + toString(): String
+}
+
+class Product {
+  + name: String
+  + price: double
+
+  + Product()
+  + Product(String name, double price)
+
+  + toString(): String
+}
+
+class LineItem {
+  + product: Product
+  + invoice: Invoice
+  + amount: int
+
+  + LineItem()
+  + LineItem(Product product, int amount, Invoice invoice)
+
+  + toString(): String
+}
+
+Customer <-d-- Invoice
+
+Invoice "1" <-r-- "*" LineItem
+
+LineItem "*" -u--> "1" Product
+
+@enduml
+----
+====
+
+
+
+
+
+
+
+== Starka Lukas
+
+
+.CLD
+[%collapsible]
+====
+[plantuml,starka-cld,png]
+----
+@startuml
+enum Brand {
+TOYOTA,
+    MERCEDES,
+    FORD,
+    SKODA,
+    CITROEN,
+    BMW,
+    SUBARU,
+    PORSCHE,
+    FERRARI,
+    VW,
+    MITSUBISHI,
+    HONDA,
+    MAZDA,
+    HYUNDAI,
+    CHEVROLET,
+    KIA,
+    OPEL,
+    SEAT,
+    FIAT,
+    LEXUS,
+    AUDI
+}
+
+class Car {
+    - id: Long
+    - model: String
+    - brand: Brand
+    - color: String
+    - hp: int
+    - price: double
+}
+
+class Customer {
+    - id: Long
+    - firstName: String
+    - lastName: String
+    - dateOfBirth: LocalDate
+    - place: String
+    - street: String
+    - zip: String
+    - budget: double
+}
+
+class Sale {
+    - car: Car;
+    - customer: Customer
+    - salesman: Salesman
+    - contractDate: LocalDate
+    - discount: double
+}
+
+class Salesman {
+    - id: Long
+    - firstName: String
+    - lastName: String
+    - hireDate: LocalDate
+    - salary: double
+}
+
+Car -down-> Brand
+Sale "1" -right-> "1" Car : is sold <
+Sale "*" --> "1" Salesman : sells <
+Sale "*" -left-> "1" Customer : buys <
+@enduml
+----
+====
+
+* CLD scheint ok
+* Eine Enumeration für die Typen ist nicht praxistauglich, hier jedoch voll ok
+
+
+
+
+
+== Steigersdorfer Marah
+
+* Assoziation zw, Hairdresser und Appointment fehlt
+
+.CLD
+[%collapsible]
+====
+[plantuml,steigersdorfer-cld,png]
+----
+@startuml
+
+class Hairdresser extends Person{
+  -salary: int
+  -appointments: List<Termin>
+  +Hairdresser(String firstName, String lastName)
+  +int getSalary()
+  +void setSalary()
+  +List<Appointment> getAppointments()
+  +void addAppointment(String date, Customer customer)
+
+}
+
+class Customer extends Person{
+  -mobileNr: String
+  +String getMobileNr()
+  +void setMobileNr(String mobileNr)
+  +List<Appointment> getAppointments()
+}
+
+class Person {
+  -firstName: String
+  -lastName: String
+  +String getFirstName()
+  +void setFirstName(String firstName)
+  +String getLastName()
+  +void setLastName(String lastName)
+
+}
+
+class Appointment {
+  -customer: Customer
+  -date: String
+  +Appointment(Kunde kunde, String date)
+  +Customer getCustomer()
+  +void setCustomer(Customer customer)
+  +String getDate()
+  +void setDate(String date)
+}
+
+Hairdresser "1" -right- "0...*" Customer : looks after >
+Customer "1" --- "1...*" Appointment : books >
+
+
+@enduml
+----
+====
+
+
+
+
+
+
+== Tang Sandy
+
+* Dein CLS ist so simpel, dass es beinah nicht positiv ist
+
+.CLD
+[%collapsible]
+====
+[plantuml,Tang-cld,png]
+----
+@startuml
+
+class Guest {
+   id : Int
+   firstName : String
+   lastName : String
+   telefonNumber : String
+}
+
+class Product {
+   Guest: Guest
+   Cook : Cook
+   id : Int
+   name : String
+   price : Double
+}
+
+class Cook {
+   id : Int
+   firstName : String
+   lastName : String
+}
+
+Product "*" -left-> "1"  Guest: has
+Product "*" -right-> "1"  Cook: is made by
+
+
+@enduml
+----
+====
+
+
+
+
+
+
+
+
+
+
+
+
+
+== Tran Kelly
+
+* Du solltest den gh-pages-Link ins *About* Deines gh-Repos posten
+
+* Was machst Du? Es geht nicht darum, möglichst viele Files ins Repo zu pushen.
+
+
+.CLD
+[%collapsible]
+====
+[plantuml,tran-cld,png]
+----
+@startuml
+
+class Call {
+  id: Long;
+  customer: Customer;
+  employee Employee;
+}
+
+class Customer{
+    id: Long;
+    firstName: String;
+    lastName: String;
+    call: Call;
+}
+class Employee{
+
+    id: Long;
+    firstName: String;
+    lastName: String;
+    call: Call;
+    department: Department;
+}
+class Department{
+  departmentName: String;
+  employees: List<Employee>;
+  headOfDepartment: HeadOfDepartment;
+}
+
+class HeadOfDepartment{
+  id: Long;
+  firstName: String;
+  lastName: String;
+  department: Department;
+}
+
+
+Call "1" <-left- "1" Customer:  tätigt  <
+Call "*" <-right- "*" Employee:  nimmt entgegen <
+Department "1" <-- "*"Employee: angestellt <
+HeadOfDepartment "1" <-- "1"Department: leitet >
+
+
+@enduml
+----
+====
+
+* Wäre vorsichtig mit den vielen bidirektionalen Beziehungen
+
+* Spar Dir die HeadOfDepartment-Klasse
+* Finde stattdessen noch ein paar sinnvolle Attribute - besonders bei Call
+
+
+
+
+== Turner Isabel
+
+.CLD
+[%collapsible]
+====
+[plantuml,turner-cld,png]
+----
+@startuml
+
+class Bus {
+    -id: Long
+    -seats: int
+}
+
+class Person {
+    -id: Long
+    -firstName: String
+    -lastName: String
+    -telNr: String
+}
+
+class Trip {
+  - id: Long
+  - destination: Destination
+  - bus: Bus
+}
+
+class Destination {
+   - id: Long
+   - street: String
+   - streetNo: int
+   - place: String
+   - zip: int
+}
+
+class Booking {
+  - id: Long
+  - person: Person
+  - trip: Trip
+}
+
+Trip  --> "1" Destination : Reise geht nach >
+Trip --> "1" Bus : Reise wird mit Bus durchgeführt >
+Booking --> "1" Trip : hat Buchungen <
+Person "1" <--  Booking : bucht eine Reise (Trip) >
+
+@enduml
+
+----
+====
+
+
+
+
+
+
+
+
+== Weissengruber Nina
+
+.CLD
+[%collapsible]
+====
+[plantuml,weissengruber-cld,png]
+----
+@startuml
+class Car{
+-id: int
+-name: String
+-preis: double
+}
+
+class Customer{
+-id: int
+-name: String
+-dateOfBirth: LocalDate
+}
+
+class Renatal{
+-car: Auto
+-customer: Kunde
+-startDatum: LocalDate
+-endDatum: LocalDate
+-discount: double
+}
+
+Car "1" <- "*" Renatal : is rented
+Renatal "*" -> "1" Customer : rents
+
+
+@enduml
+
+----
+====
+
+
+
+
+
+
+
+
+== Wiesinger Jonas
+
+* Gratuliere - wie kann man so ein einfaches CLD, so falsch machen
+** Es fehlen Bewegungsdaten
+
+.CLD
+[%collapsible]
+====
+[plantuml,wiesinger-cld,png]
+----
+@startuml
+
+class CarPark {
+    id: Long
+    location: Double[]
+    name: String
+    spots: Arraylist<ParkingSpot>
+}
+
+class ParkingSpot {
+    id: Long
+    available: Boolean
+    owner: Person
+}
+
+class Person {
+    customerId: Long
+    firstName: String
+    lastName: String
+    licensePlate: String
+}
+
+CarPark "1" -- "*" ParkingSpot
+ParkingSpot "1" -- "0..1" Person
+@enduml
+
+----
+====

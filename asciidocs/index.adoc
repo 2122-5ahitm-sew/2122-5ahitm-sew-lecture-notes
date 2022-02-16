@@ -193,7 +193,42 @@ endif::backend-html5[]
 
 == 2021-11-08
 
+== 2021-11-15
 
+image::jsonb.png[]
+
+
+=== JSON-P
+
+[source,java]
+----
+JsonObject susi = Json
+                .createObjectBuilder()
+                .add("name", "Susi")
+                .add("city", "Leonding")
+                .build();
+----
+
+=== graalvm
+
+
+== 2022-02-14
+
+=== graphQl
+
+==== Übung - graphQL-Quarkus Tutorial
+
+==== Übung - graphQL in das eigene Microproject einbauen
+
+IMPORTANT: Vergessen Sie nicht dies im Microproject zu dokumentieren
+
+=== gRPC
+
+==== Übung - Quarkus-gRPC-Tutorial durchführen
+
+==== Übung gRPC in das eigene Projekt einbauen
+
+IMPORTANT: Vergessen Sie nicht dies im Microproject zu dokumentieren
 
 
 
