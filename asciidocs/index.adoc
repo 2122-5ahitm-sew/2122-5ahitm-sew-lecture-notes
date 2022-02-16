@@ -193,6 +193,26 @@ endif::backend-html5[]
 
 == 2021-11-08
 
+== 2021-11-15
+
+image::jsonb.png[]
+
+
+=== JSON-P
+
+[source,java]
+----
+JsonObject susi = Json
+                .createObjectBuilder()
+                .add("name", "Susi")
+                .add("city", "Leonding")
+                .build();
+----
+
+=== graalvm
+
+
+
 == 2022-01-31
 === Was ist Keycloak?
 - Authentifizierungsservice
@@ -244,26 +264,9 @@ endif::backend-html5[]
 === HÜ:
 Using security with .properties File in Microprojekt einbauen (quarkus.io)
 
-Kapitelweise Zusammenfassung ins README von Microprojekt
+* Kapitelweise Zusammenfassung ins README von Microprojekt
 
 
-== 2021-11-15
-
-image::jsonb.png[]
-
-
-=== JSON-P
-
-[source,java]
-----
-JsonObject susi = Json
-                .createObjectBuilder()
-                .add("name", "Susi")
-                .add("city", "Leonding")
-                .build();
-----
-
-=== graalvm
 
 
 == 2022-02-14
