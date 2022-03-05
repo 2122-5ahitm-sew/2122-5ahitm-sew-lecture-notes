@@ -289,6 +289,93 @@ IMPORTANT: Vergessen Sie nicht dies im Microproject zu dokumentieren
 
 
 
+== 2022-03-04 - Zusammenfassung
+
+* Folgende Zusammenfassung erhebt keinen Anspruch auf technische Genauigkeit oder Vollständigkeit
+
+=== html / http
+
+* Internet für Menschen
+* Webseiten werden in der Auszeichnungsprache html gespeichert
+* mit dem Protokoll http an den Browser übertragen
+* und im Browser gerendert und für den Menschen aufbereitet
+
+=== restful Services
+
+* Internet für Maschinen / Prozesse
+* Es werden (keine für den Menschen aufbereitete Webseiten, sondern) Daten in Form von Json, xml ev. yaml übertragen
+* Als Protokoll wird ebenfalls http verwendet, mit seinen Methoden GET, POST, DELETE, PUT, PATCH, ...
+
+=== websockets
+
+* Problem bei diesen Web-Technologien ist, dass die Clients immer anfragen müssen und nicht vom Server über Änderungen informiert werden können.
+
+* Daher wurden folgen workarounds verwendet:
+** Polling
+** Long Polling
+** Streaming
+** ...
+
+* Websockets lösen das Problem
+** Im Gegensatz zum klassischen Zugriff auf Sockets, werden websockets nicht von der Firewall geblockt, da auf Port 80  möglich
+
+** Beim Server werden die Clients in einer Collection eingetragen und können danach vom Server benachrichtigt werden, da dem Server die Information zum Senden von Nachrichten an die Clients zur Verfügung hat.
+
+** Websockets können daher einzelne Clients benachrichtigen oder alle gemeinsam (broadcast)
+
+** Es können sowohl Text- als auch Binärdaten übermittelt werden.
+
+=== SSE - Server sent events
+
+* Das gleiche Prinzip wie bei websockets
+
+* Es können allerdings nur kurze Nachrichten in Textform übermittelt werden
+
+=== graphQL
+
+* Problem bei restful Services
+** Man muss immer die vorgefertigte Datenstruktur der Endpoints abrufen.
+Bei komplizierten Datenstrukturen (Json-Struktur) kann die Benutzung "unhandlich" sein.
+
+** Daher haben große Plattformen wie zB github ihre Rest-Endpoints bereits abgekündigt (deprecated).
+
+* Alternative ist graphQL (entwickelt von Facebook)
+
+** Ähnlich wie bei der Datenbank-Abfragesprache SQL kann bei graphQL definiert werden, welche Datenobjekte abgerufen werden.
+
+** Dadurch werden die übertragenen Datenmengen kleiner und die Datenstrukturen übersichtlicher.
+
+=== grpc (entwickelt von google)
+
+* Problem bei Rest und graphQL
+** Die Daten werden als Text übertragen
+** Bei großen Datenmengen langasm und das Netz wird belastet.
+
+* grpc basiert auf folgendem Prinzip
+** Die Daten werden komprimiert
+** und binär übertragen
+
+* Dazu gibt es eine Beschreibung der Daten, das sogenannte proto-file
+* Die Daten werden durch den protobuf-Compiler compiliert und beim Adressaten wiederhergestellt.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ////
 ====
 Vereinbarung:
