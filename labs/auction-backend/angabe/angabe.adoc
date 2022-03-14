@@ -1,0 +1,190 @@
+= Leistungsfeststellung - 2022-03-07 - 5ahitm - SEW
+:icons: font
+:sectnums:
+:imagesdir: images
+
+== Allgemeines
+Die Aufgabe besteht aus der Planung und Implementierung einer Webanwendung, die sowohl aus
+einem Server als auch aus einem Client besteht. Sowohl Client als auch Server können unabhängig voneinander implementiert und getestet werden. Im Server ist auch ein Datenbankanschluss zu implementieren. Das Datenmodell ist vorgegeben und darf nicht verändert werden.
+
+Der Server ist in Java mit dem Framework *Quarkus* zu implementieren.
+Für den Client ist Typescript mit dem Framework *Angular* zu verwenden.
+Als Datenbank kommt *Apache Derby* zum Einsatz.
+
+Die gezeigten Abbildungen des Userinterfaces in der Angabe dienen nur der Verdeutlichung der Aufgabenstellung. Es muss optisch nicht exakt so aussehen. Inhaltlich müssen die geforderten Funktionalitäten aber geboten werden.
+
+Erstellen Sie zwei Projekte in jeweils einem eigenen Ordner:
+
+* der Ordner mit dem Quarkus-Projekt erhält den Namen *backend*
+* der Ordner mit dem Angular-Projekt erhält den Namen *frontend*
+
+== Aufgabenstellung Online-Auktion
+
+Es ist eine (aufgrund des Zeitrahmens natürlich vereinfachte) Version einer Online-
+Auktionsplattform zu implementieren. Dabei werden aktuell laufende Auktionen in einer Tabelle angezeigt. Wird ein Eintrag ausgewählt gelangt der Benutzer zu einer Detailansicht der Auktion. Auf dieser kann er auch eigene Gebote abgeben.
+
+Die Kommunikation zwischen Client und Server hat mittels *REST-Schnittstelle* zu erfolgen.
+Der Zugriff auf die Datenbank erfolgt mit Hilfe von *JPA/Hibernate*. Optional kann auch das
+Framework *Panache* eingesetzt werden.
+
+
+== Implementierung des Servers samt Datenbankanbindung
+
+=== Projekt anlegen
+
+Erstellen Sie ein neues Quarkus-Projekt und binden Sie die benötigten Extensions ein.
+
+Starten Sie Apache Derby und legen Sie eine Derby-Datenbank mit dem Namen `*db*` an.
+
+Die Konfiguration der Datenbankanbindung lautet dann wie folgt:
+[source]
+----
+quarkus.datasource.db-kind=derby
+quarkus.datasource.jdbc.url=jdbc:derby://localhost:1527/db;create=true
+quarkus.hibernate-orm.database.generation=drop-and-create
+quarkus.hibernate-orm.log.sql=false
+quarkus.http.cors=true
+----
+
+=== Datenmodell
+
+Implementieren Sie die Entity-Klassen passend zu folgendem ER-Diagramm:
+
+[plantuml,erd-soll,png]
+----
+@startuml
+
+skinparam handwritten false
+skinparam nodesep 70
+skinparam ranksep 70
+
+entity Product {
+  * product_id: number <<generated>>
+  --
+  * name: varchar2(100)
+  * description: varchar2(100)
+}
+
+entity Auction {
+  * auction_id: number <<generated>>
+  --
+  * start: timestamp
+  * end: timestamp
+  * start_price: timestamp
+  * users_id: number <<FK>>
+  * product_id: number <<FK>>
+}
+
+entity Users {
+  * users_id: number <<generated>>
+  --
+  * firstname: varchar2(30)
+  * lastname: varchar2(30)
+  * street: varchar2(30)
+  * house_no: varchar2(10)
+  * zip: varchar2(5)
+  * city: varchar2(30)
+}
+
+entity Bid {
+  * bid_id: number <<generated>>
+  --
+  * amount: number(9,2)
+  * timestamp: timestamp
+  * users_id: number <<FK>>
+  * auction_id: number <<FK>>
+}
+
+Product ||..o{Auction
+Users ||..o{Auction
+Users ||..o{Bid
+Auction ||.right.o{Bid
+
+@enduml
+----
+
+Es reicht, die Beziehungen unidirektional abzubilden. Bei Bedarf können diese aber auch
+bidirektional implementiert werden.
+
+Die Primary-Keys sind jeweils automatisch zu vergeben.
+
+Testdaten werden am Angabelaufwerk in der Datei `*import.sql*` bereitgestellt. Damit kann auch die Korrektheit der Entity-Klassen überprüft werden.
+
+=== REST-Schnittstelle
+
+Folgende Endpoints müssen im Backend bereitgestellt werden:
+
+* `*GET /api/auction/get-running*` + 
+Liefert alle aktuell laufenden Auktionen. Dazu werden die Zeitstempel mit der aktuellen
+Systemzeit verglichen. + 
+Pro Auktion sind folgende Daten zu übertragen (für die Anzeige in der Tabelle): +
+`{ id, name, endTs, price, bids }`
+
+* `*GET /api/auction/<auctionId>*` +
+Liefert die Details zu einer Auktion, es wird also eine Auction-Instanz übertragen.
+
+* `*GET /api/bid/last-for-auction/<auctionId>*` +
+Liefert die letzten (max. 5) Gebote zu der übergebenen AuktionsID. +
+Wird für die Detailansicht benötigt.
+
+* `*POST /api/bid*` +
+Speichert das übergebene Gebot in der Datenbank ab. +
+Folgende Daten werden übergeben: +
+`{ auctionId, userId, amount }`
+
+* `*POST /api/auction/import-for-user/<userId>*` +
+Importiert die im Body übergebenen Daten im CSV-Format für die angegebene userId. +
+Stellen Sie sicher dass die Produkte nicht redundant in der Datenbank angelegt werden. Existiert ein Produkt also schon in der Datenbank wird auf dieses referenziert. +
+Erwartete Rückgabe (als String): `"CSV imported... Processed <number> lines"`` +
++ 
+Das CSV muss folgende Spalten (in beliebiger Reihenfolge, diese wird über die Header-Zeile bestimmt) enthalten: + 
+`PRODUCTNAME, DESCRIPTION, STARTTS, ENDTS, STARTINGPRICE` +
+Zeitstempel werden im Format `dd.MM.yyyy HH:mm:ss` erwartet. +
+Beispieldaten finden Sie in der Datei `auctions.csv`. + 
+Verwenden Sie für die Verarbeitung der Daten möglichst das Streaming-API. + 
+Auf ausführliche Formatprüfungen und Errorhandling kann aus Zeitgründen verzichtet werden.
+
+== Implementierung des Clients
+
+Der Client ist in Angular zu implementieren. Für eine schönere optische Gestaltung kann die
+Angular Material UI-Komponentenbibliothek verwendet werden.
+
+Aus Zeitgründen wird auf ein Login-Funktion verzichtet. Setzen Sie also eine fixe Benutzernummer.
+
+=== Auktionsliste (Startseite)
+
+In einer Tabelle sind alle aktuell verfügbaren Auktionen aufzulisten. +
+Die Liste wird so lange angezeigt, bis der Refresh-Button gedrückt wird. Durch den Klick auf Refresh wird die Liste erneut vom Backend abgefragt und in der Oberfläche aktualisiert.
+
+In der Liste sind zuerst auslaufende Auktionen oben zu reihen (absteigende Sortierung). Optional können weitere Sortiermethoden ergänzt werden.
+
+Die Auktionsliste muss clientseitig gefiltert werden können. Dazu ist ein Suchfeld auf der Oberfläche zu integrieren. Mit jeder Änderung des Inhalts vom Suchfeld ist die Liste entsprechend einzuschränken. Die Suche darf nicht case-sensitive sein. Der Suchtext kann  irgendwo im Produktnamen enthalten sein (muss also nicht zwingend mit dem Suchtext beginnen).
+
+Mit einem Klick auf die Titelzeile (Online-Auctions) gelangt man jederzeit wieder auf die Auktionsliste.
+
+image::startpage.png[]
+
+
+=== Detailansicht
+
+Wird in der Liste auf eine Auktion geklickt, so gelangt man in die Detailansicht zu der gewählten Auktion (siehe Abbildung).
+
+Unterhalb der Auktionsdaten wird die Möglichkeit geboten, selbst ein Gebot für den Artikel abzugeben. Standardmäßig wird immer das aktuelle Höchstgebot + 1 Euro vorgeschlagen. Wurde noch kein Gebot abgegeben, ist der Ausrufepreis vorzuschlagen.
+
+image::bid.png[]
+
+
+=== Aktualisierung der Gebote
+
+Wird für den in der Detailansicht angezeigten Artikel von einem anderen Benutzer ein Gebot
+abgegeben, muss dieses unmittelbar auch in der Detailansicht angezeigt werden. Dadurch soll
+verhindert werden, dass Gebote abgegeben werden, die nicht über dem aktuellen Höchstgebot liegen.
+
+Implementieren Sie diese automatische Aktualisierung, indem Sie auf WebSockets oder SSE
+zurückgreifen. +
+Erhält der Client die Information, dass ein anderes Gebot zu dem Artikel abgegeben wurde, holt er die Gebotsliste neu ab. Aus Performancegründen dürfen aber nur Änderungen zu dem jeweils angezeigten Artikel mitgeteilt werden!
+
+
+
+
+Evtl. bereitgestellte Unit-Tests und Kommentare sind Teil der Angabe!
