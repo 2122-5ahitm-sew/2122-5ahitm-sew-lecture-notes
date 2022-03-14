@@ -23,7 +23,7 @@ public class Bid extends PanacheEntityBase {
     public LocalDateTime createTs;
 
     @ManyToOne
-    @JoinColumn(name = "USERS_ID")
+    @JoinColumn(name = "BIDDER_ID")
     public Users bidder;
 
     @ManyToOne

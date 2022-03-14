@@ -11,17 +11,18 @@ public class Auction {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "auctionSeq")
     private Long id;
 
+    @Column(name = "START_TS")
     private LocalDateTime startTs;
+    @Column(name = "END_TS")
     private LocalDateTime endTs;
+    @Column(name = "START_PRICE")
     private Double startPrice;
 
     @ManyToOne
-    private
-    Users seller;
+    private Users seller;
 
     @ManyToOne
-    private
-    Product product;
+    private Product product;
 
 
     public Auction() {
