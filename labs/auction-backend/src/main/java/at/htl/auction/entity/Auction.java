@@ -83,4 +83,16 @@ public class Auction {
     public void setProduct(Product product) {
         this.product = product;
     }
+
+    @Override
+    public String toString() {
+        return "Auction{" +
+                "id=" + id +
+                ", startTs=" + startTs +
+                ", endTs=" + endTs +
+                ", startPrice=" + startPrice +
+                ", seller=" + seller.getLastName() +
+                ", product=" + product.getName() +
+                '}';
+    }
 }
