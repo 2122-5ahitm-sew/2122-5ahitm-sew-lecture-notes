@@ -1,5 +1,6 @@
 package at.htl.auction.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
 import javax.persistence.*;
@@ -19,7 +20,20 @@ public class Bid extends PanacheEntityBase {
 
     public Double amount;
 
+    public Bid() {
+        createTs = LocalDateTime.now();
+    }
+
+    public Bid(Auction auction, Double amount, Users bidder) {
+        this();
+        this.amount = amount;
+        this.bidder = bidder;
+        this.auction = auction;
+    }
+
     @Column(name = "CREATE_TS")
+    @JsonFormat(
+            shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     public LocalDateTime createTs;
 
     @ManyToOne

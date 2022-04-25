@@ -1,0 +1,11 @@
+GET http://localhost:8080/api/vehicle
+
+###
+
+GET http://localhost:8080/api/vehicle/v2
+
+###
+
+GET http://localhost:8080/api/vehicle/v3
+
+###
